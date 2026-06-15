@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diyoan — Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F7F7F5;
+    --surface: #FFFFFF;
+    --surface2: #F2F2EF;
+    --border: #E4E4DF;
+    --border2: #CECECA;
+    --ink: #1A1A18;
+    --ink2: #6B6B67;
+    --ink3: #AEAEA8;
+    --accent: #1A1A18;
+    --green: #2D7A4F;
+    --red: #C0392B;
+    --blue: #2563EB;
+    --amber: #D97706;
+    --r: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-lg: 0 4px 16px rgba(0,0,0,0.08);
+  }
+
+  html { font-size: 15px; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-weight: 400;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.2rem;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .logo span { font-style: italic; color: var(--ink2); }
+  .date-chip {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--ink2);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 4px 12px;
+  }
+
+  /* ── NAV ── */
+  nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    gap: 0;
+  }
+  .nav-btn {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 12px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--ink2);
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+    margin-bottom: -1px;
+  }
+  .nav-btn:hover { color: var(--ink); }
+  .nav-btn.active { color: var(--ink); border-bottom-color: var(--ink); }
+
+  /* ── LAYOUT ── */
+  main { padding: 2rem; max-width: 1200px; margin: 0 auto; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+  }
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    letter-spacing: -0.01em;
+  }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: var(--r);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s;
+  }
+  .btn:hover { background: var(--surface2); border-color: var(--border2); }
+  .btn-primary {
+    background: var(--ink);
+    color: white;
+    border-color: var(--ink);
+  }
+  .btn-primary:hover { background: #333; border-color: #333; }
+  .btn-ghost {
+    background: none;
+    border-color: transparent;
+    color: var(--ink2);
+    padding: 4px 8px;
+  }
+  .btn-ghost:hover { background: var(--surface2); color: var(--ink); border-color: transparent; }
+  .btn-danger { border-color: #FCA5A5; background: #FFF5F5; color: var(--red); }
+  .btn-danger:hover { background: #FEE2E2; }
+
+  /* ── INPUTS ── */
+  input, textarea, select {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 8px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--ink); }
+  textarea { resize: vertical; min-height: 80px; }
+  label { display: block; font-size: 0.8rem; font-weight: 500; color: var(--ink2); margin-bottom: 5px; }
+  .field { margin-bottom: 1rem; }
+  .field:last-child { margin-bottom: 0; }
+  .row { display: flex; gap: 12px; }
+  .row .field { flex: 1; }
+
+  /* ── MODAL ── */
+  .modal-bg {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border-radius: calc(var(--r) * 1.5);
+    box-shadow: var(--shadow-lg);
+    width: 100%;
+    max-width: 440px;
+    padding: 1.75rem;
+  }
+  .modal h3 { font-family: 'DM Serif Display', serif; font-size: 1.1rem; margin-bottom: 1.25rem; }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1.5rem; }
+
+  /* ═══════════════════════════════════
+     CALENDAR
+  ═══════════════════════════════════ */
+  .cal-nav { display: flex; align-items: center; gap: 12px; }
+  .cal-month { font-family: 'DM Serif Display', serif; font-size: 1rem; min-width: 160px; text-align: center; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+  .cal-dow {
+    text-align: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--ink3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 8px 0;
+  }
+  .cal-day {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 8px;
+    border-radius: var(--r);
+    font-size: 0.85rem;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.1s;
+    min-height: 60px;
+  }
+  .cal-day:hover { background: var(--surface2); }
+  .cal-day.other-month .day-num { color: var(--ink3); }
+  .cal-day.today .day-num {
+    background: var(--ink);
+    color: white;
+    border-radius: 99px;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+  }
+  .day-num { font-weight: 500; line-height: 1; }
+  .day-events { display: flex; flex-direction: column; gap: 2px; width: 100%; padding: 4px 4px 0; }
+  .day-dot {
+    font-size: 0.6rem;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: #EEF2FF;
+    color: var(--blue);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    font-weight: 500;
+  }
+
+  .events-list { margin-top: 1.5rem; }
+  .events-list h4 { font-size: 0.8rem; font-weight: 600; color: var(--ink2); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.75rem; }
+  .event-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: var(--r);
+    border: 1px solid var(--border);
+    margin-bottom: 8px;
+    font-size: 0.875rem;
+  }
+  .event-date-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--ink2);
+    white-space: nowrap;
+    min-width: 68px;
+  }
+  .event-title { flex: 1; font-weight: 500; }
+  .event-cat {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 99px;
+    background: #EEF2FF;
+    color: var(--blue);
+    font-weight: 500;
+  }
+
+  /* ═══════════════════════════════════
+     BUDGET
+  ═══════════════════════════════════ */
+  .budget-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .budget-stat {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1rem;
+  }
+  .budget-stat .label { font-size: 0.75rem; font-weight: 500; color: var(--ink2); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .budget-stat .amount {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+  .budget-stat.income .amount { color: var(--green); }
+  .budget-stat.expenses .amount { color: var(--red); }
+  .budget-stat.balance .amount { color: var(--ink); }
+
+  .progress-bar { height: 6px; background: var(--surface2); border-radius: 99px; overflow: hidden; margin: 8px 0; }
+  .progress-fill { height: 100%; border-radius: 99px; background: var(--ink); transition: width 0.4s; }
+  .progress-fill.over { background: var(--red); }
+
+  .tx-list { display: flex; flex-direction: column; gap: 6px; }
+  .tx-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: var(--r);
+    border: 1px solid var(--border);
+    font-size: 0.875rem;
+    transition: background 0.1s;
+  }
+  .tx-item:hover { background: var(--surface2); }
+  .tx-cat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .tx-name { flex: 1; font-weight: 500; }
+  .tx-meta { font-size: 0.75rem; color: var(--ink2); }
+  .tx-amount { font-family: 'DM Mono', monospace; font-size: 0.875rem; font-weight: 500; }
+  .tx-amount.income { color: var(--green); }
+  .tx-amount.expense { color: var(--red); }
+  .tx-delete { opacity: 0; transition: opacity 0.15s; }
+  .tx-item:hover .tx-delete { opacity: 1; }
+
+  .cat-colors { --c0: #6366F1; --c1: #F59E0B; --c2: #10B981; --c3: #EF4444; --c4: #8B5CF6; --c5: #EC4899; --c6: #14B8A6; --c7: #F97316; }
+
+  /* ═══════════════════════════════════
+     VISION BOARD
+  ═══════════════════════════════════ */
+  .vision-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+  .goal-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.15s;
+  }
+  .goal-card:hover { box-shadow: var(--shadow-lg); }
+  .goal-emoji { font-size: 2rem; line-height: 1; }
+  .goal-title { font-family: 'DM Serif Display', serif; font-size: 1rem; }
+  .goal-desc { font-size: 0.8125rem; color: var(--ink2); line-height: 1.55; }
+  .goal-target { font-size: 0.75rem; color: var(--ink3); font-family: 'DM Mono', monospace; }
+  .goal-progress-label { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--ink2); }
+  .goal-actions { display: flex; gap: 6px; margin-top: 4px; }
+  .goal-card-footer { display: flex; align-items: center; gap: 8px; margin-top: auto; }
+  .goal-tag {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    color: var(--ink2);
+    font-weight: 500;
+  }
+
+  .goal-cover {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: calc(var(--r) - 1px) calc(var(--r) - 1px) 0 0;
+    display: block;
+    margin: -1.25rem -1.25rem 1rem -1.25rem;
+    width: calc(100% + 2.5rem);
+  }
+  .goal-cover-placeholder {
+    width: calc(100% + 2.5rem);
+    height: 100px;
+    margin: -1.25rem -1.25rem 1rem -1.25rem;
+    background: var(--surface2);
+    border-radius: calc(var(--r) - 1px) calc(var(--r) - 1px) 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    color: var(--ink3);
+    font-size: 0.8rem;
+    gap: 6px;
+    transition: background 0.15s;
+  }
+  .goal-cover-placeholder:hover { background: var(--border); color: var(--ink2); }
+
+  .img-tabs { display: flex; gap: 0; margin-bottom: 1rem; border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
+  .img-tab { flex: 1; padding: 8px; font-size: 0.8rem; font-weight: 500; background: var(--surface); border: none; cursor: pointer; color: var(--ink2); font-family: 'DM Sans', sans-serif; transition: background 0.12s; }
+  .img-tab.active { background: var(--ink); color: white; }
+  .img-tab-panel { display: none; }
+  .img-tab-panel.active { display: block; }
+  .img-preview { width: 100%; height: 120px; object-fit: cover; border-radius: var(--r); margin-top: 8px; border: 1px solid var(--border); display: none; }
+
+  .vision-empty {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--ink3);
+    font-size: 0.9rem;
+  }
+  .vision-empty .big { font-family: 'DM Serif Display', serif; font-size: 2rem; color: var(--border); margin-bottom: 8px; }
+
+  /* ═══════════════════════════════════
+     REMINDERS
+  ═══════════════════════════════════ */
+  .reminder-sections { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .reminder-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    border-radius: var(--r);
+    border: 1px solid var(--border);
+    font-size: 0.875rem;
+    transition: background 0.1s;
+  }
+  .reminder-item:hover { background: var(--surface2); }
+  .reminder-item.done { opacity: 0.45; }
+  .reminder-item.done .r-title { text-decoration: line-through; }
+  .r-check {
+    width: 18px; height: 18px;
+    border: 2px solid var(--border2);
+    border-radius: 5px;
+    flex-shrink: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+    transition: background 0.12s, border-color 0.12s;
+  }
+  .reminder-item.done .r-check { background: var(--ink); border-color: var(--ink); }
+  .r-check-icon { display: none; font-size: 10px; color: white; }
+  .reminder-item.done .r-check-icon { display: block; }
+  .r-body { flex: 1; }
+  .r-title { font-weight: 500; margin-bottom: 2px; }
+  .r-time {
+    font-size: 0.7rem;
+    color: var(--ink3);
+    font-family: 'DM Mono', monospace;
+  }
+  .r-time.overdue { color: var(--red); }
+  .r-priority { width: 4px; border-radius: 99px; align-self: stretch; flex-shrink: 0; }
+  .r-del { opacity: 0; transition: opacity 0.15s; }
+  .reminder-item:hover .r-del { opacity: 1; }
+  .r-list { display: flex; flex-direction: column; gap: 6px; min-height: 60px; }
+
+  /* ═══════════════════════════════════
+     MISC
+  ═══════════════════════════════════ */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+  }
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+  }
+
+  .empty-state { text-align: center; padding: 2rem; color: var(--ink3); font-size: 0.875rem; }
+
+  @media (max-width: 700px) {
+    main { padding: 1rem; }
+    .budget-summary { grid-template-columns: 1fr; }
+    .reminder-sections { grid-template-columns: 1fr; }
+    nav { overflow-x: auto; padding: 0 1rem; }
+    .nav-btn { padding: 12px 14px; white-space: nowrap; }
+  }
+
+  /* ═══════════════════════════════════
+     READING LIST
+  ═══════════════════════════════════ */
+  .read-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  .read-stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1rem 1.25rem;
+    box-shadow: var(--shadow);
+  }
+  .read-stat .rs-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink3); margin-bottom: 4px; }
+  .read-stat .rs-count { font-family: 'DM Serif Display', serif; font-size: 1.6rem; letter-spacing: -0.02em; color: var(--ink); }
+  .read-stat .rs-sub { font-size: 0.72rem; color: var(--ink3); margin-top: 2px; }
+
+  .read-filter-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+  }
+  .read-filter {
+    padding: 6px 16px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--ink2);
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+  }
+  .read-filter:hover { background: var(--surface2); color: var(--ink); }
+  .read-filter.active { background: var(--ink); color: white; border-color: var(--ink); }
+
+  .read-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+  }
+
+  .read-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: box-shadow 0.15s;
+  }
+  .read-card:hover { box-shadow: var(--shadow-lg); }
+
+  .read-card-top {
+    display: flex;
+    gap: 14px;
+    padding: 1.25rem;
+    align-items: flex-start;
+  }
+  .read-icon {
+    width: 46px;
+    height: 58px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+  }
+  .read-icon.Book    { background: #EEF2FF; }
+  .read-icon.Article { background: #F0FDF4; }
+  .read-icon.Journal { background: #FFF7ED; }
+  .read-icon.Essay   { background: #FDF4FF; }
+
+  .read-meta { flex: 1; min-width: 0; }
+  .read-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 0.975rem;
+    letter-spacing: -0.01em;
+    margin-bottom: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .read-author { font-size: 0.78rem; color: var(--ink2); margin-bottom: 6px; }
+  .read-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+  .read-tag {
+    font-size: 0.68rem;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+  .read-tag.Book    { background: #EEF2FF; color: #4338CA; }
+  .read-tag.Article { background: #F0FDF4; color: #166534; }
+  .read-tag.Journal { background: #FFF7ED; color: #92400E; }
+  .read-tag.Essay   { background: #FDF4FF; color: #7E22CE; }
+  .read-tag.status-Reading  { background: #FEF3C7; color: #92400E; }
+  .read-tag.status-Done     { background: #D1FAE5; color: #065F46; }
+  .read-tag.status-To-Read  { background: var(--surface2); color: var(--ink2); }
+
+  .read-notes {
+    font-size: 0.8rem;
+    color: var(--ink2);
+    line-height: 1.55;
+    padding: 0 1.25rem;
+    margin-bottom: 0.75rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .read-pdf-bar {
+    margin: 0 1.25rem 1rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.78rem;
+    color: var(--ink2);
+  }
+  .read-pdf-bar .pdf-icon { font-size: 1rem; }
+  .read-pdf-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .read-pdf-open {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--blue);
+    cursor: pointer;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+  .read-pdf-open:hover { text-decoration: underline; }
+
+  .read-progress-wrap { padding: 0 1.25rem 0.5rem; }
+  .read-prog-label { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--ink2); margin-bottom: 4px; }
+
+  .read-card-footer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 1.25rem;
+    border-top: 1px solid var(--border);
+    margin-top: auto;
+  }
+  .read-date { font-size: 0.7rem; color: var(--ink3); font-family: 'DM Mono', monospace; }
+
+  .read-empty {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--ink3);
+    font-size: 0.9rem;
+  }
+  .read-empty .big { font-family: 'DM Serif Display', serif; font-size: 2rem; color: var(--border); margin-bottom: 8px; }
+
+  /* PDF viewer overlay */
+  .pdf-viewer-bg {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 300;
+    flex-direction: column;
+  }
+  .pdf-viewer-bg.open { display: flex; }
+  .pdf-viewer-toolbar {
+    background: var(--ink);
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 1.5rem;
+    font-size: 0.875rem;
+  }
+  .pdf-viewer-title { flex: 1; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pdf-viewer-close {
+    background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; padding: 4px 8px; border-radius: 4px;
+  }
+  .pdf-viewer-close:hover { background: rgba(255,255,255,0.1); }
+  .pdf-frame { flex: 1; width: 100%; border: none; }
+
+  @media (max-width: 700px) {
+    .read-stats { grid-template-columns: repeat(2, 1fr); }
+    .read-grid { grid-template-columns: 1fr; }
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Diyoan<span>'s space</span></div>
+  <div class="date-chip" id="headerDate"></div>
+</header>
+
+<nav>
+  <button class="nav-btn active" onclick="showPanel('calendar')">Calendar</button>
+  <button class="nav-btn" onclick="showPanel('budget')">Budget</button>
+  <button class="nav-btn" onclick="showPanel('vision')">Vision Board</button>
+  <button class="nav-btn" onclick="showPanel('reminders')">Reminders</button>
+  <button class="nav-btn" onclick="showPanel('reading')">Reading List</button>
+</nav>
+
+<main>
+
+  <!-- ══════════ CALENDAR ══════════ -->
+  <div id="panel-calendar" class="panel active">
+    <div class="section-header">
+      <div class="section-title">Calendar</div>
+      <button class="btn btn-primary" onclick="openModal('event-modal')">+ Event</button>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <button class="btn-ghost btn" onclick="calNav(-1)">‹</button>
+        <div class="cal-month" id="calMonth"></div>
+        <button class="btn-ghost btn" onclick="calNav(1)">›</button>
+      </div>
+      <div class="cal-grid" id="calDows"></div>
+      <div class="cal-grid" id="calDays"></div>
+    </div>
+    <div class="events-list">
+      <h4>Upcoming events</h4>
+      <div id="eventsList"></div>
+    </div>
+  </div>
+
+  <!-- ══════════ BUDGET ══════════ -->
+  <div id="panel-budget" class="panel">
+    <div class="section-header">
+      <div class="section-title">Budget</div>
+      <button class="btn btn-primary" onclick="openModal('tx-modal')">+ Transaction</button>
+    </div>
+    <div class="budget-summary">
+      <div class="budget-stat income">
+        <div class="label">Income</div>
+        <div class="amount" id="totalIncome">$0</div>
+      </div>
+      <div class="budget-stat expenses">
+        <div class="label">Expenses</div>
+        <div class="amount" id="totalExpenses">$0</div>
+      </div>
+      <div class="budget-stat balance">
+        <div class="label">Balance</div>
+        <div class="amount" id="totalBalance">$0</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Transactions</div>
+        <select id="txFilter" style="width:auto" onchange="renderBudget()">
+          <option value="all">All</option>
+          <option value="income">Income</option>
+          <option value="expense">Expenses</option>
+        </select>
+      </div>
+      <div class="tx-list" id="txList"></div>
+    </div>
+  </div>
+
+  <!-- ══════════ VISION BOARD ══════════ -->
+  <div id="panel-vision" class="panel">
+    <div class="section-header">
+      <div class="section-title">Vision Board</div>
+      <button class="btn btn-primary" onclick="openModal('goal-modal')">+ Goal</button>
+    </div>
+    <div class="vision-grid" id="visionGrid"></div>
+  </div>
+
+  <!-- ══════════ REMINDERS ══════════ -->
+  <div id="panel-reminders" class="panel">
+    <div class="section-header">
+      <div class="section-title">Reminders</div>
+      <button class="btn btn-primary" onclick="openModal('reminder-modal')">+ Reminder</button>
+    </div>
+    <div class="reminder-sections">
+      <div class="card">
+        <div class="card-header"><div class="card-title">To Do</div></div>
+        <div class="r-list" id="rListTodo"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Done</div></div>
+        <div class="r-list" id="rListDone"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ READING LIST ══════════ -->
+  <div id="panel-reading" class="panel">
+    <div class="section-header">
+      <div class="section-title">Reading List</div>
+      <button class="btn btn-primary" onclick="openModal('read-modal')">+ Add Item</button>
+    </div>
+    <div class="read-stats" id="readStats"></div>
+    <div class="read-filter-row">
+      <button class="read-filter active" data-cat="All" onclick="setReadFilter('All',this)">All</button>
+      <button class="read-filter" data-cat="Book" onclick="setReadFilter('Book',this)">Books</button>
+      <button class="read-filter" data-cat="Article" onclick="setReadFilter('Article',this)">Articles</button>
+      <button class="read-filter" data-cat="Journal" onclick="setReadFilter('Journal',this)">Journals</button>
+      <button class="read-filter" data-cat="Essay" onclick="setReadFilter('Essay',this)">Essays</button>
+      <div style="margin-left:auto">
+        <select id="readStatusFilter" style="width:auto;font-size:0.8rem;padding:5px 10px" onchange="renderReading()">
+          <option value="all">All statuses</option>
+          <option value="To Read">To Read</option>
+          <option value="Reading">Reading</option>
+          <option value="Done">Done</option>
+        </select>
+      </div>
+    </div>
+    <div class="read-grid" id="readGrid"></div>
+  </div>
+
+
+</main>
+
+<!-- ══════════ MODALS ══════════ -->
+
+<!-- Event Modal -->
+<div class="modal-bg" id="event-modal">
+  <div class="modal">
+    <h3>New Event</h3>
+    <div class="field"><label>Title</label><input type="text" id="ev-title" placeholder="Meeting, appointment…"></div>
+    <div class="row">
+      <div class="field"><label>Date</label><input type="date" id="ev-date"></div>
+      <div class="field"><label>Time</label><input type="time" id="ev-time"></div>
+    </div>
+    <div class="field">
+      <label>Category</label>
+      <select id="ev-cat">
+        <option value="Personal">Personal</option>
+        <option value="Work">Work</option>
+        <option value="Health">Health</option>
+        <option value="Social">Social</option>
+        <option value="Finance">Finance</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div class="field"><label>Notes (optional)</label><textarea id="ev-notes" rows="2"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('event-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addEvent()">Add Event</button>
+    </div>
+  </div>
+</div>
+
+<!-- Transaction Modal -->
+<div class="modal-bg" id="tx-modal">
+  <div class="modal">
+    <h3>New Transaction</h3>
+    <div class="field">
+      <label>Type</label>
+      <select id="tx-type">
+        <option value="expense">Expense</option>
+        <option value="income">Income</option>
+      </select>
+    </div>
+    <div class="field"><label>Description</label><input type="text" id="tx-name" placeholder="Groceries, Salary…"></div>
+    <div class="row">
+      <div class="field"><label>Amount ($)</label><input type="number" id="tx-amount" placeholder="0.00" step="0.01" min="0"></div>
+      <div class="field"><label>Date</label><input type="date" id="tx-date"></div>
+    </div>
+    <div class="field">
+      <label>Category</label>
+      <select id="tx-cat">
+        <option value="Food">Food</option>
+        <option value="Transport">Transport</option>
+        <option value="Health">Health</option>
+        <option value="Entertainment">Entertainment</option>
+        <option value="Utilities">Utilities</option>
+        <option value="Shopping">Shopping</option>
+        <option value="Income">Income</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('tx-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addTransaction()">Add</button>
+    </div>
+  </div>
+</div>
+
+<!-- Goal Modal -->
+<div class="modal-bg" id="goal-modal">
+  <div class="modal">
+    <h3>New Goal</h3>
+    <div class="row">
+      <div class="field" style="max-width:80px"><label>Emoji</label><input type="text" id="g-emoji" placeholder="🎯" maxlength="2"></div>
+      <div class="field"><label>Goal Title</label><input type="text" id="g-title" placeholder="Run a marathon…"></div>
+    </div>
+    <div class="field"><label>Description</label><textarea id="g-desc" rows="2" placeholder="Why this goal matters…"></textarea></div>
+    <div class="field">
+      <label>Cover Image (optional)</label>
+      <div class="img-tabs">
+        <button class="img-tab active" onclick="switchImgTab('upload')">Upload file</button>
+        <button class="img-tab" onclick="switchImgTab('url')">Paste URL</button>
+      </div>
+      <div class="img-tab-panel active" id="img-panel-upload">
+        <input type="file" id="g-img-file" accept="image/*" onchange="previewFile(this)" style="padding:6px 12px">
+      </div>
+      <div class="img-tab-panel" id="img-panel-url">
+        <input type="url" id="g-img-url" placeholder="https://example.com/image.jpg" oninput="previewUrl(this.value)">
+      </div>
+      <img id="g-img-preview" class="img-preview" alt="Preview">
+    </div>
+    <div class="row">
+      <div class="field"><label>Target Date</label><input type="date" id="g-date"></div>
+      <div class="field">
+        <label>Category</label>
+        <select id="g-cat">
+          <option value="Health">Health</option>
+          <option value="Career">Career</option>
+          <option value="Finance">Finance</option>
+          <option value="Learning">Learning</option>
+          <option value="Travel">Travel</option>
+          <option value="Relationships">Relationships</option>
+          <option value="Lifestyle">Lifestyle</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Progress (0–100%)</label>
+      <input type="range" id="g-progress" min="0" max="100" value="0" oninput="document.getElementById('g-progress-val').textContent = this.value + '%'">
+      <div style="font-size:0.8rem;color:var(--ink2);margin-top:4px"><span id="g-progress-val">0%</span></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('goal-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addGoal()">Add Goal</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reminder Modal -->
+<div class="modal-bg" id="reminder-modal">
+  <div class="modal">
+    <h3>New Reminder</h3>
+    <div class="field"><label>Reminder</label><input type="text" id="r-title" placeholder="Call mum, take medication…"></div>
+    <div class="row">
+      <div class="field"><label>Date</label><input type="date" id="r-date"></div>
+      <div class="field"><label>Time</label><input type="time" id="r-time"></div>
+    </div>
+    <div class="field">
+      <label>Priority</label>
+      <select id="r-priority">
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('reminder-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addReminder()">Add Reminder</button>
+    </div>
+  </div>
+</div>
+
+<!-- Image Edit Modal -->
+<div class="modal-bg" id="img-edit-modal">
+  <div class="modal">
+    <h3>Cover Image</h3>
+    <div class="img-tabs">
+      <button class="img-tab active" onclick="switchImgEditTab('upload')">Upload file</button>
+      <button class="img-tab" onclick="switchImgEditTab('url')">Paste URL</button>
+    </div>
+    <div class="img-tab-panel active" id="img-edit-panel-upload">
+      <input type="file" id="img-edit-file" accept="image/*" onchange="previewEditFile(this)" style="padding:6px 12px">
+    </div>
+    <div class="img-tab-panel" id="img-edit-panel-url">
+      <input type="url" id="img-edit-url" placeholder="https://example.com/image.jpg" oninput="previewEditUrl(this.value)">
+    </div>
+    <img id="img-edit-preview" class="img-preview" alt="Preview">
+    <div class="modal-actions">
+      <button class="btn btn-danger" onclick="removeGoalImage()">Remove image</button>
+      <button class="btn" onclick="closeModal('img-edit-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveGoalImage()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════
+// STORAGE
+// ═══════════════════════════
+const S = {
+  get: k => { try { return JSON.parse(localStorage.getItem(k)) || [] } catch { return [] } },
+  set: (k, v) => localStorage.setItem(k, JSON.stringify(v)),
+};
+let events     = S.get('d_events');
+let txs        = S.get('d_txs');
+let goals      = S.get('d_goals');
+let reminders  = S.get('d_reminders');
+
+const save = () => {
+  S.set('d_events', events);
+  S.set('d_txs', txs);
+  S.set('d_goals', goals);
+  S.set('d_reminders', reminders);
+  S.set('d_readings', readings);
+};
+
+// ═══════════════════════════
+// HEADER DATE
+// ═══════════════════════════
+const now = new Date();
+document.getElementById('headerDate').textContent = now.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+
+// ═══════════════════════════
+// PANELS
+// ═══════════════════════════
+function showPanel(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  event.target.classList.add('active');
+  if (id === 'calendar') renderCalendar();
+  if (id === 'budget') renderBudget();
+  if (id === 'vision') renderVision();
+  if (id === 'reminders') renderReminders();
+  if (id === 'reading') renderReading();
+}
+
+// ═══════════════════════════
+// MODALS
+// ═══════════════════════════
+function openModal(id) {
+  const today = new Date().toISOString().slice(0, 10);
+  if (id === 'event-modal') { document.getElementById('ev-date').value = today; document.getElementById('ev-title').value = ''; document.getElementById('ev-notes').value = ''; }
+  if (id === 'tx-modal')    { document.getElementById('tx-date').value = today; document.getElementById('tx-name').value = ''; document.getElementById('tx-amount').value = ''; }
+  if (id === 'goal-modal')  { document.getElementById('g-emoji').value = '🎯'; document.getElementById('g-title').value = ''; document.getElementById('g-desc').value = ''; document.getElementById('g-progress').value = 0; document.getElementById('g-progress-val').textContent = '0%'; document.getElementById('g-img-preview').style.display = 'none'; document.getElementById('g-img-preview').src = ''; document.getElementById('g-img-url').value = ''; document.getElementById('g-img-file').value = ''; switchImgTab('upload'); }
+  if (id === 'read-modal') { document.getElementById('rd-title').value=''; document.getElementById('rd-author').value=''; document.getElementById('rd-notes').value=''; document.getElementById('rd-progress').value=0; document.getElementById('rd-prog-val').textContent='0%'; document.getElementById('rd-pdf').value=''; }
+  if (id === 'reminder-modal') { document.getElementById('r-date').value = today; document.getElementById('r-title').value = ''; }
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-bg').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); }));
+
+// ═══════════════════════════
+// CALENDAR
+// ═══════════════════════════
+let calDate = new Date(now.getFullYear(), now.getMonth(), 1);
+
+function calNav(dir) { calDate = new Date(calDate.getFullYear(), calDate.getMonth() + dir, 1); renderCalendar(); }
+
+function renderCalendar() {
+  const year = calDate.getFullYear(), month = calDate.getMonth();
+  document.getElementById('calMonth').textContent = calDate.toLocaleDateString('en-AU', { month: 'long', year: 'numeric' });
+
+  const dows = document.getElementById('calDows');
+  dows.innerHTML = ['Su','Mo','Tu','We','Th','Fr','Sa'].map(d => `<div class="cal-dow">${d}</div>`).join('');
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const prevDays = new Date(year, month, 0).getDate();
+
+  let html = '';
+  let total = Math.ceil((firstDay + daysInMonth) / 7) * 7;
+
+  for (let i = 0; i < total; i++) {
+    let d, cls = 'cal-day', dateStr;
+    if (i < firstDay) { d = prevDays - firstDay + i + 1; cls += ' other-month'; dateStr = `${year}-${String(month).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
+    else if (i >= firstDay + daysInMonth) { d = i - firstDay - daysInMonth + 1; cls += ' other-month'; dateStr = `${year}-${String(month + 2).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
+    else {
+      d = i - firstDay + 1;
+      dateStr = `${year}-${String(month + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      if (d === now.getDate() && month === now.getMonth() && year === now.getFullYear()) cls += ' today';
+    }
+    const dayEvents = events.filter(e => e.date === dateStr);
+    const dotsHtml = dayEvents.slice(0, 2).map(e => `<div class="day-dot">${e.title}</div>`).join('');
+    html += `<div class="${cls}" onclick="filterDay('${dateStr}')"><div class="day-num">${d}</div><div class="day-events">${dotsHtml}</div></div>`;
+  }
+  document.getElementById('calDays').innerHTML = html;
+  renderUpcomingEvents();
+}
+
+function filterDay(dateStr) {
+  const filtered = events.filter(e => e.date === dateStr);
+  renderEventsList(filtered.length ? filtered : null, dateStr);
+}
+
+function renderUpcomingEvents() {
+  const todayStr = now.toISOString().slice(0, 10);
+  const upcoming = events.filter(e => e.date >= todayStr).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time)).slice(0, 8);
+  renderEventsList(upcoming);
+}
+
+function renderEventsList(list, dateLabel) {
+  const el = document.getElementById('eventsList');
+  const src = list !== null ? list : events;
+  if (!src.length) { el.innerHTML = `<div class="empty-state">${dateLabel ? 'No events this day.' : 'No upcoming events. Add one above.'}</div>`; return; }
+  el.innerHTML = src.map((e, i) => `
+    <div class="event-item">
+      <div class="event-date-badge">${formatDate(e.date)}${e.time ? ' · ' + e.time : ''}</div>
+      <div class="event-title">${e.title}</div>
+      <div class="event-cat">${e.cat}</div>
+      <button class="btn btn-ghost" onclick="deleteEvent(${events.indexOf(e)})">✕</button>
+    </div>`).join('');
+}
+
+function addEvent() {
+  const title = document.getElementById('ev-title').value.trim();
+  const date = document.getElementById('ev-date').value;
+  if (!title || !date) return alert('Please add a title and date.');
+  events.push({ id: Date.now(), title, date, time: document.getElementById('ev-time').value, cat: document.getElementById('ev-cat').value, notes: document.getElementById('ev-notes').value });
+  save(); closeModal('event-modal'); renderCalendar();
+}
+function deleteEvent(i) { events.splice(i, 1); save(); renderCalendar(); }
+function formatDate(str) { const d = new Date(str + 'T00:00:00'); return d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }); }
+
+// ═══════════════════════════
+// BUDGET
+// ═══════════════════════════
+const catColors = ['#6366F1','#F59E0B','#10B981','#EF4444','#8B5CF6','#EC4899','#14B8A6','#F97316'];
+const catList = ['Food','Transport','Health','Entertainment','Utilities','Shopping','Income','Other'];
+
+function renderBudget() {
+  const filter = document.getElementById('txFilter').value;
+  const filtered = txs.filter(t => filter === 'all' || t.type === filter);
+  const income = txs.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+  const expenses = txs.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+  document.getElementById('totalIncome').textContent = '$' + income.toFixed(2);
+  document.getElementById('totalExpenses').textContent = '$' + expenses.toFixed(2);
+  const bal = income - expenses;
+  document.getElementById('totalBalance').textContent = (bal < 0 ? '-$' : '$') + Math.abs(bal).toFixed(2);
+  const list = document.getElementById('txList');
+  if (!filtered.length) { list.innerHTML = '<div class="empty-state">No transactions yet.</div>'; return; }
+  const sorted = [...filtered].sort((a, b) => b.date.localeCompare(a.date));
+  list.innerHTML = sorted.map(t => {
+    const ci = catList.indexOf(t.cat);
+    const col = ci >= 0 ? catColors[ci % catColors.length] : '#888';
+    return `<div class="tx-item">
+      <div class="tx-cat-dot" style="background:${col}"></div>
+      <div class="tx-name">${t.name}</div>
+      <div class="tx-meta">${formatDate(t.date)} · ${t.cat}</div>
+      <div class="tx-amount ${t.type}">${t.type === 'income' ? '+' : '-'}$${t.amount.toFixed(2)}</div>
+      <button class="btn btn-ghost tx-delete" onclick="deleteTx(${txs.indexOf(t)})">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function addTransaction() {
+  const name = document.getElementById('tx-name').value.trim();
+  const amount = parseFloat(document.getElementById('tx-amount').value);
+  const date = document.getElementById('tx-date').value;
+  if (!name || !amount || !date) return alert('Please fill in all fields.');
+  txs.push({ id: Date.now(), name, amount, date, type: document.getElementById('tx-type').value, cat: document.getElementById('tx-cat').value });
+  save(); closeModal('tx-modal'); renderBudget();
+}
+function deleteTx(i) { txs.splice(i, 1); save(); renderBudget(); }
+
+// ═══════════════════════════
+// VISION BOARD
+// ═══════════════════════════
+function renderVision() {
+  const grid = document.getElementById('visionGrid');
+  if (!goals.length) {
+    grid.innerHTML = `<div class="vision-empty"><div class="big">✦</div>Your goals will live here.<br>Add your first one to get started.</div>`;
+    return;
+  }
+  grid.innerHTML = goals.map((g, i) => {
+    const p = g.progress || 0;
+    const daysLeft = g.date ? Math.ceil((new Date(g.date) - now) / 86400000) : null;
+    const coverHtml = g.image
+      ? `<img class="goal-cover" src="${g.image}" alt="${g.title}" onerror="this.style.display='none'">`
+      : `<div class="goal-cover-placeholder" onclick="triggerImageEdit(${i})">＋ Add cover image</div>`;
+    return `<div class="goal-card">
+      ${coverHtml}
+      <div class="goal-emoji">${g.emoji || '🎯'}</div>
+      <div class="goal-title">${g.title}</div>
+      ${g.desc ? `<div class="goal-desc">${g.desc}</div>` : ''}
+      <div class="goal-progress-label"><span>Progress</span><span>${p}%</span></div>
+      <div class="progress-bar"><div class="progress-fill${p >= 100 ? ' over' : ''}" style="width:${p}%;background:${p >= 100 ? 'var(--green)' : 'var(--ink)'}"></div></div>
+      <div class="goal-card-footer">
+        <span class="goal-tag">${g.cat}</span>
+        ${daysLeft !== null ? `<span class="goal-tag" style="color:${daysLeft < 0 ? 'var(--red)' : daysLeft < 30 ? 'var(--amber)' : 'var(--ink2)'}">${daysLeft < 0 ? 'Overdue' : daysLeft + 'd left'}</span>` : ''}
+        <div style="margin-left:auto;display:flex;gap:4px">
+          <button class="btn btn-ghost" onclick="triggerImageEdit(${i})" title="Change image">🖼</button>
+          <button class="btn btn-ghost" onclick="editGoalProgress(${i})" title="Update progress">↑</button>
+          <button class="btn btn-ghost" onclick="deleteGoal(${i})" title="Delete">✕</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function addGoal() {
+  const title = document.getElementById('g-title').value.trim();
+  if (!title) return alert('Please add a title.');
+  const imgPreview = document.getElementById('g-img-preview');
+  goals.push({
+    id: Date.now(), title,
+    emoji: document.getElementById('g-emoji').value || '🎯',
+    desc: document.getElementById('g-desc').value.trim(),
+    date: document.getElementById('g-date').value,
+    cat: document.getElementById('g-cat').value,
+    progress: parseInt(document.getElementById('g-progress').value),
+    image: imgPreview.style.display !== 'none' ? imgPreview.src : null
+  });
+  save(); closeModal('goal-modal'); renderVision();
+}
+
+let editingGoalIdx = null;
+function triggerImageEdit(i) {
+  editingGoalIdx = i;
+  openModal('img-edit-modal');
+  const preview = document.getElementById('img-edit-preview');
+  preview.style.display = goals[i].image ? 'block' : 'none';
+  if (goals[i].image) preview.src = goals[i].image;
+  document.getElementById('img-edit-url').value = '';
+  document.getElementById('img-edit-file').value = '';
+  switchImgEditTab('upload');
+}
+function switchImgEditTab(tab) {
+  ['upload','url'].forEach(t => {
+    document.getElementById('img-edit-panel-' + t).classList.toggle('active', t === tab);
+    document.querySelectorAll('#img-edit-modal .img-tab').forEach((b,i) => b.classList.toggle('active', (i===0&&tab==='upload')||(i===1&&tab==='url')));
+  });
+}
+function previewEditFile(input) {
+  if (!input.files[0]) return;
+  const r = new FileReader();
+  r.onload = e => { const p = document.getElementById('img-edit-preview'); p.src = e.target.result; p.style.display = 'block'; };
+  r.readAsDataURL(input.files[0]);
+}
+function previewEditUrl(url) {
+  const p = document.getElementById('img-edit-preview');
+  if (url) { p.src = url; p.style.display = 'block'; } else { p.style.display = 'none'; }
+}
+function saveGoalImage() {
+  const preview = document.getElementById('img-edit-preview');
+  if (editingGoalIdx !== null && preview.style.display !== 'none') {
+    goals[editingGoalIdx].image = preview.src;
+    save(); renderVision();
+  }
+  closeModal('img-edit-modal');
+}
+function removeGoalImage() {
+  if (editingGoalIdx !== null) { goals[editingGoalIdx].image = null; save(); renderVision(); }
+  closeModal('img-edit-modal');
+}
+
+function switchImgTab(tab) {
+  ['upload','url'].forEach(t => {
+    document.getElementById('img-panel-' + t).classList.toggle('active', t === tab);
+  });
+  document.querySelectorAll('#goal-modal .img-tab').forEach((b,i) => b.classList.toggle('active', (i===0&&tab==='upload')||(i===1&&tab==='url')));
+}
+function previewFile(input) {
+  if (!input.files[0]) return;
+  const r = new FileReader();
+  r.onload = e => { const p = document.getElementById('g-img-preview'); p.src = e.target.result; p.style.display = 'block'; };
+  r.readAsDataURL(input.files[0]);
+}
+function previewUrl(url) {
+  const p = document.getElementById('g-img-preview');
+  if (url) { p.src = url; p.style.display = 'block'; } else { p.style.display = 'none'; }
+}
+function deleteGoal(i) { if (confirm('Remove this goal?')) { goals.splice(i, 1); save(); renderVision(); } }
+function editGoalProgress(i) {
+  const val = prompt('Update progress (0–100):', goals[i].progress);
+  if (val === null) return;
+  const n = Math.min(100, Math.max(0, parseInt(val) || 0));
+  goals[i].progress = n; save(); renderVision();
+}
+
+// ═══════════════════════════
+// REMINDERS
+// ═══════════════════════════
+const priorityColors = { high: '#EF4444', medium: '#F59E0B', low: '#D1D5DB' };
+
+function renderReminders() {
+  const todo = reminders.filter(r => !r.done);
+  const done = reminders.filter(r => r.done);
+  const todayStr = now.toISOString().slice(0, 10) + 'T' + now.toTimeString().slice(0, 5);
+
+  const renderItem = (r) => {
+    const dtStr = r.date + (r.time ? 'T' + r.time : 'T23:59');
+    const overdue = !r.done && dtStr < todayStr;
+    return `<div class="reminder-item${r.done ? ' done' : ''}">
+      <div class="r-priority" style="background:${priorityColors[r.priority] || '#D1D5DB'}"></div>
+      <div class="r-check" onclick="toggleReminder(${reminders.indexOf(r)})"><span class="r-check-icon">✓</span></div>
+      <div class="r-body">
+        <div class="r-title">${r.title}</div>
+        <div class="r-time${overdue ? ' overdue' : ''}">${formatDate(r.date)}${r.time ? ' · ' + r.time : ''}${overdue ? ' · Overdue' : ''}</div>
+      </div>
+      <button class="btn btn-ghost r-del" onclick="deleteReminder(${reminders.indexOf(r)})">✕</button>
+    </div>`;
+  };
+
+  document.getElementById('rListTodo').innerHTML = todo.length ? todo.sort((a,b) => (a.date+a.time).localeCompare(b.date+b.time)).map(renderItem).join('') : '<div class="empty-state">All clear!</div>';
+  document.getElementById('rListDone').innerHTML = done.length ? done.map(renderItem).join('') : '<div class="empty-state">Nothing completed yet.</div>';
+}
+
+function addReminder() {
+  const title = document.getElementById('r-title').value.trim();
+  const date = document.getElementById('r-date').value;
+  if (!title || !date) return alert('Please add a title and date.');
+  reminders.push({ id: Date.now(), title, date, time: document.getElementById('r-time').value, priority: document.getElementById('r-priority').value, done: false });
+  save(); closeModal('reminder-modal'); renderReminders();
+}
+function toggleReminder(i) { reminders[i].done = !reminders[i].done; save(); renderReminders(); }
+function deleteReminder(i) { reminders.splice(i, 1); save(); renderReminders(); }
+
+
+// ═══════════════════════════
+// READING LIST
+// ═══════════════════════════
+let readings = S.get('d_readings');
+
+
+const catIcons = { Book: '📖', Article: '📄', Journal: '🔬', Essay: '✍️' };
+let activeReadFilter = 'All';
+
+function setReadFilter(cat, btn) {
+  activeReadFilter = cat;
+  document.querySelectorAll('.read-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderReading();
+}
+
+function renderReading() {
+  const statusF = document.getElementById('readStatusFilter').value;
+  let items = readings.filter(r => (activeReadFilter === 'All' || r.cat === activeReadFilter) && (statusF === 'all' || r.status === statusF));
+
+  // Stats
+  const cats = ['Book','Article','Journal','Essay'];
+  const statEl = document.getElementById('readStats');
+  statEl.innerHTML = [
+    { label: 'Total', count: readings.length, sub: items.length + ' shown' },
+    ...cats.map(c => ({ label: c + 's', count: readings.filter(r => r.cat === c).length, sub: readings.filter(r => r.cat === c && r.status === 'Done').length + ' finished' }))
+  ].map(s => `<div class="read-stat"><div class="rs-label">${s.label}</div><div class="rs-count">${s.count}</div><div class="rs-sub">${s.sub}</div></div>`).join('');
+
+  const grid = document.getElementById('readGrid');
+  if (!items.length) {
+    grid.innerHTML = '<div class="read-empty"><div class="big">📚</div>Nothing here yet.<br>Add your first item above.</div>';
+    return;
+  }
+
+  grid.innerHTML = items.map(r => {
+    const idx = readings.indexOf(r);
+    const p = r.progress || 0;
+    const statusClass = 'status-' + r.status.replace(' ', '-');
+    const pdfBar = r.pdfName ? `<div class="read-pdf-bar"><span class="pdf-icon">📎</span><span class="read-pdf-name">${r.pdfName}</span><a class="read-pdf-open" onclick="openPdf(${idx})">Open PDF ↗</a></div>` : '';
+    return `<div class="read-card">
+      <div class="read-card-top">
+        <div class="read-icon ${r.cat}">${catIcons[r.cat] || '📄'}</div>
+        <div class="read-meta">
+          <div class="read-title" title="${r.title}">${r.title}</div>
+          ${r.author ? `<div class="read-author">${r.author}</div>` : ''}
+          <div class="read-tags">
+            <span class="read-tag ${r.cat}">${r.cat}</span>
+            <span class="read-tag ${statusClass}">${r.status}</span>
+          </div>
+        </div>
+      </div>
+      ${r.notes ? `<div class="read-notes">${r.notes}</div>` : ''}
+      ${pdfBar}
+      <div class="read-progress-wrap">
+        <div class="read-prog-label"><span>Progress</span><span>${p}%</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${p}%;background:${p>=100?'var(--green)':'var(--ink)'}"></div></div>
+      </div>
+      <div class="read-card-footer">
+        <span class="read-date">${r.added ? formatDate(r.added) : ''}</span>
+        <div style="margin-left:auto;display:flex;gap:4px">
+          <button class="btn btn-ghost" onclick="updateReadProgress(${idx})" title="Update progress">↑</button>
+          <button class="btn btn-ghost" onclick="cycleReadStatus(${idx})" title="Change status">⟳</button>
+          <button class="btn btn-ghost" onclick="deleteRead(${idx})" title="Delete">✕</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function addReadItem() {
+  const title = document.getElementById('rd-title').value.trim();
+  if (!title) return alert('Please add a title.');
+  const file = document.getElementById('rd-pdf').files[0];
+  const addEntry = (pdfData, pdfName) => {
+    readings.push({
+      id: Date.now(), title,
+      author: document.getElementById('rd-author').value.trim(),
+      cat: document.getElementById('rd-cat').value,
+      status: document.getElementById('rd-status').value,
+      progress: parseInt(document.getElementById('rd-progress').value),
+      notes: document.getElementById('rd-notes').value.trim(),
+      added: new Date().toISOString().slice(0,10),
+      pdfData: pdfData || null,
+      pdfName: pdfName || null
+    });
+    save(); closeModal('read-modal'); renderReading();
+  };
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = e => addEntry(e.target.result, file.name);
+    reader.readAsDataURL(file);
+  } else {
+    addEntry(null, null);
+  }
+}
+
+function updateReadProgress(i) {
+  const val = prompt('Update progress (0–100):', readings[i].progress);
+  if (val === null) return;
+  readings[i].progress = Math.min(100, Math.max(0, parseInt(val) || 0));
+  if (readings[i].progress === 100) readings[i].status = 'Done';
+  save(); renderReading();
+}
+
+function cycleReadStatus(i) {
+  const statuses = ['To Read', 'Reading', 'Done'];
+  const cur = statuses.indexOf(readings[i].status);
+  readings[i].status = statuses[(cur + 1) % statuses.length];
+  save(); renderReading();
+}
+
+function deleteRead(i) {
+  if (confirm('Remove this item?')) { readings.splice(i, 1); save(); renderReading(); }
+}
+
+function openPdf(i) {
+  const r = readings[i];
+  if (!r.pdfData) return;
+  document.getElementById('pdfViewerTitle').textContent = r.title;
+  document.getElementById('pdfFrame').src = r.pdfData;
+  document.getElementById('pdf-viewer').classList.add('open');
+}
+
+function closePdfViewer() {
+  document.getElementById('pdf-viewer').classList.remove('open');
+  document.getElementById('pdfFrame').src = '';
+}
+
+// ═══════════════════════════
+// INIT
+// ═══════════════════════════
+renderCalendar();
+</script>
+
+<!-- Reading Modal -->
+<div class="modal-bg" id="read-modal">
+  <div class="modal" style="max-width:500px">
+    <h3>Add to Reading List</h3>
+    <div class="field"><label>Title</label><input type="text" id="rd-title" placeholder="Book or article title…"></div>
+    <div class="field"><label>Author / Source</label><input type="text" id="rd-author" placeholder="Author name, publication…"></div>
+    <div class="row">
+      <div class="field">
+        <label>Type</label>
+        <select id="rd-cat">
+          <option value="Book">Book</option>
+          <option value="Article">Article</option>
+          <option value="Journal">Journal</option>
+          <option value="Essay">Essay</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Status</label>
+        <select id="rd-status">
+          <option value="To Read">To Read</option>
+          <option value="Reading">Reading</option>
+          <option value="Done">Done</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Reading Progress (%)</label>
+      <input type="range" id="rd-progress" min="0" max="100" value="0" oninput="document.getElementById('rd-prog-val').textContent = this.value + '%'">
+      <div style="font-size:0.8rem;color:var(--ink2);margin-top:4px"><span id="rd-prog-val">0%</span></div>
+    </div>
+    <div class="field"><label>Notes (optional)</label><textarea id="rd-notes" rows="2" placeholder="Key takeaways, thoughts…"></textarea></div>
+    <div class="field">
+      <label>Upload PDF (optional)</label>
+      <input type="file" id="rd-pdf" accept="application/pdf" style="padding:6px 12px">
+      <div style="font-size:0.75rem;color:var(--ink3);margin-top:4px">PDF is stored in your browser — large files may use significant storage.</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('read-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addReadItem()">Add</button>
+    </div>
+  </div>
+</div>
+
+<!-- PDF Viewer -->
+<div class="pdf-viewer-bg" id="pdf-viewer">
+  <div class="pdf-viewer-toolbar">
+    <span class="pdf-viewer-title" id="pdfViewerTitle"></span>
+    <button class="pdf-viewer-close" onclick="closePdfViewer()">✕ Close</button>
+  </div>
+  <iframe class="pdf-frame" id="pdfFrame"></iframe>
+</div>
+
+</body>
+</html>
